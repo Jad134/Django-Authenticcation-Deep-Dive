@@ -4,13 +4,12 @@ from .serializers import ManufacturerSerializer, ProductSerializer, Manufacturer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from .permissions import IsStaffOrReadOnly, IsAdminForDeleteOrPatchAndReadOnly, IsOwnerOrAdmin
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+
 
 class ManufacturerList(generics.ListCreateAPIView):
     queryset = Manufacturer.objects.all()
     serializer_class = ManufacturerSerializer
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticated] #IsStaffOrReadOnly |
+    permission_classes = [IsStaffOrReadOnly] #IsStaffOrReadOnly |
 
   
 class ManufacturerDetail(generics.RetrieveUpdateDestroyAPIView):

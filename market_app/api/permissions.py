@@ -1,10 +1,34 @@
+from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 class IsStaffOrReadOnly:
-    pass
+     def has_permission(self, request, view):
+        is_staff = bool(request.user and request.user.is_staff )
+        return is_staff or request.method in SAFE_METHODS
+
+     def has_object_permission(self, request, view, obj):
+        # Ermöglicht auch auf Objektebene nur Lesezugriffe für nicht-Admin-Benutzer.
+        return self.has_permission(request, view)
+
+class IsAdminForDeleteOrPatchAndReadOnly(BasePermission):
+    
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+        elif request.method == 'DELETE':
+            return bool(request.user and request.user.is_superuser )
+        else:
+           return bool(request.user and request.user.is_staff )
 
 
-class IsAdminForDeleteOrPatchAndReadOnly:
-    pass
+class IsOwnerOrAdmin(BasePermission):
 
 
-class IsOwnerOrAdmin:
-    pass
+      def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+        elif request.method == 'DELETE':
+            return bool(request.user and request.user.is_superuser )
+        else:
+           return bool(request.user and request.user == obj.user)
