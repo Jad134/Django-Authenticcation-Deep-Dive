@@ -1,15 +1,16 @@
 from rest_framework import generics
 from market_app.models import Manufacturer, Product, ManufacturerUser
 from .serializers import ManufacturerSerializer, ProductSerializer, ManufacturerUserSerializer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from .permissions import IsStaffOrReadOnly, IsAdminForDeleteOrPatchAndReadOnly, IsOwnerOrAdmin
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 class ManufacturerList(generics.ListCreateAPIView):
     queryset = Manufacturer.objects.all()
     serializer_class = ManufacturerSerializer
-    permission_classes = [IsStaffOrReadOnly] #IsStaffOrReadOnly |
+    permission_classes = [IsAuthenticated] #IsStaffOrReadOnly |
 
   
 class ManufacturerDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -48,3 +49,4 @@ class ManufacturerProductListCreate(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         manufacturer_id = self.kwargs['manufacturer_id']
         serializer.save(manufacturer_id=manufacturer_id)
+
